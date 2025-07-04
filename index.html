@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #f4f4f4;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="formFrame" src=""></iframe>
+
+  <script>
+    const iframe = document.getElementById("formFrame");
+    const params = new URLSearchParams(window.location.search);
+    const idAset = params.get("id_aset");
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbznKN8-fsGtc9E6q7OFNyLNPcxLVjPjjYoTZ3EbeGt4kBIpX5XNks7xBUhq_7uvQJVD_Q/exec";
+    iframe.src = idAset ? `${webAppUrl}?id_aset=${encodeURIComponent(idAset)}` : webAppUrl;
+  </script>
+</body>
+</html>
