@@ -1,31 +1,452 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
-    html, body {
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: url('https://raw.githubusercontent.com/DISHUBLMJ/dishublmj.github.io/main/background.jpg') no-repeat center center fixed;
+      background-size: cover;
       margin: 0;
       padding: 0;
-      height: 100%;
-      background: #f4f4f4;
     }
-    iframe {
+    .hero-header {
+      background: transparent;
+      height: auto;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+      border-radius: 0 0 12px 12px;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: nowrap;
+      text-align: left;
+      justify-content: center;
+    }
+    .header-content img {
+      height: 100px;
+      width: auto;
+    }
+    .hero-header-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.3;
+    }
+    .hero-header-text div:first-child {
+      font-size: 3em;
+      font-weight: bold;
+    }
+    .hero-header-text div:last-child {
+      font-size: 1.6em;
+    }
+    form {
+      background: white;
+      max-width: 600px;
+      margin: 20px auto 40px auto;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    input, select, textarea {
       width: 100%;
-      height: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+    }
+    button {
+      padding: 10px 24px;
+      font-size: 1em;
+      background-color: #007BFF;
+      color: white;
       border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    #loading, #success {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1em;
+      font-weight: bold;
+      color: white;
+      background: none;
+    }
+    #success { display: none; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+    .checkbox-row input[type="checkbox"] {
+      margin: 0;
+      width: 18px;
+      height: 18px;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 4px;
+      display: none;
+    }
+    #preview {
+      margin-top: 10px;
+      max-width: 100%;
+      display: none;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 600px) {
+      .hero-header-text div:first-child { font-size: 1.6em; }
+      .hero-header-text div:last-child { font-size: 1em; }
+      .header-content img { height: 70px; }
+      button { width: 100%; justify-content: center; }
+    }
+    .hidden{
+      display:none;
+    }
+    .text-red{
+      color:red;
     }
   </style>
 </head>
+
 <body>
-  <iframe id="formFrame" src=""></iframe>
+  <div class="hero-header">
+    <div class="header-content">
+      <img src="https://drive.google.com/thumbnail?sz=w500&id=1EvO-4VMstr4OmOJeQYJ2y-qMsbbE1Oe0" alt="Logo Dinas" />
+      <div class="hero-header-text">
+        <div>DINAS PERHUBUNGAN LUMAJANG</div>
+        <div>PENGADUAN PRASARANA PERHUBUNGAN</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading">🔄 Mohon ditunggu sebentar...</div>
+  <div id="success">✅ Pengaduan telah kami terima dan segera kami tindak lanjuti.</div>
+
+  <form id="form" style="display:none;">
+    <label>Foto Pengaduan:</label>
+    <input type="file" id="foto" accept="image/*">
+    
+    <img id="preview" alt="Preview Gambar" />
+
+    <label>Tanggal Pengaduan:</label>
+    <input type="date" id="tanggal">
+    <div id="error-tanggal" class="error-message">Wajib diisi</div>
+
+    <div id="id_group">
+      <label>ID Aset:</label>
+      <input type="text" id="id_aset" readonly>
+    </div>
+
+    <div id="koor_group">
+      <label>Koordinat:</label>
+      <input type="text" id="koordinat" readonly>
+    </div>
+
+    <label>Alamat:</label>
+    <input type="text" id="alamat">
+    <div id="error-alamat" class="error-message">Wajib diisi</div>
+
+    <div id="jenis_group">
+      <label>Jenis Prasarana:</label>
+      <select id="jenis">
+        <option value="">Pilih...</option>
+        <option>Alat Penerangan Jalan (APJ)</option>
+        <option>Alat Pemberi Isyarat Lalu Lintas (APILL)</option>
+      </select>
+      <input type="text" id="jenis_text" readonly hidden>
+      <div id="error-jenis" class="error-message">Wajib diisi</div>
+    </div>
+
+    <label>Kondisi Prasarana (bisa pilih lebih dari satu):</label>
+    <div id="kondisi_group">
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Mati"><span>Mati</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Kabel terputus"><span>Kabel terputus</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Tertabrak kendaraan"><span>Tertabrak kendaraan</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Tiang patah atau roboh"><span>Tiang patah atau roboh</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Lainnya"><span>Lainnya</span></div>
+    </div>
+    <div id="lainnya_group" style="display:none;">
+      <label>Jelaskan Kondisi Lainnya:</label>
+      <input type="text" id="kondisi_lain">
+    </div>
+    <div id="error-kondisi" class="error-message">Pilih minimal 1</div>
+
+    <label>Keterangan Lain (Opsional):</label>
+    <textarea id="keterangan"></textarea>
+
+    <label>Nomor WhatsApp:</label>
+    <input type="tel" id="wa" placeholder="Contoh: 081234567890">
+    <small style="color: gray;">Opsional. Jika diisi, Anda akan menerima pemberitahuan status penanganan melalui WhatsApp.</small>
+    <p id="unsafe_image_error" class="hidden text-red"><i>Foto yang anda masukan tidak lulus sensor</i></p>
+    <button type="submit" id="submitBtn">
+      Kirim <div id="btn-spinner" class="spinner" style="display:none;"></div>
+    </button>
+  </form>
 
   <script>
-    const iframe = document.getElementById("formFrame");
+    // ⚠️ GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA YANG BARU
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxfT_kejD3xBAYGTzBdUmTNfM3AF4l9jmIvFPSZxwTGKTO35Yr-Pteiwzib3OncFioxNg/exec";
+
     const params = new URLSearchParams(window.location.search);
-    const idAset = params.get("id_aset");
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbzpcib1p6wAeyErlGGYqt4GNHyR-qOPYV9j65tN8upjE--u8YF52SJ9SCdLupV2wTVc6Q/exec";
-    iframe.src = idAset ? `${webAppUrl}?id_aset=${encodeURIComponent(idAset)}` : webAppUrl;
+    const idFromServer = params.get("id_aset");
+    
+    let isSubmitting = false;
+
+    function resizeImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const maxWidth = 1024;
+          const scale = maxWidth / img.width;
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressedData = canvas.toDataURL("image/jpeg", 0.6);
+          callback(compressedData);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function formatWA(input) {
+      let wa = input.trim().replace(/[\s\-]/g, "");
+      if (wa === "") return "";
+      if (wa.startsWith("0")) return "62" + wa.slice(1);
+      return wa;
+    }
+
+    function toggleLainnya() {
+      const checkboxes = document.querySelectorAll('input[name="kondisi"]:checked');
+      const values = Array.from(checkboxes).map(cb => cb.value);
+      const lainnyaGroup = document.getElementById("lainnya_group");
+      if (values.includes("Lainnya")) {
+        lainnyaGroup.style.display = "block";
+        document.getElementById("kondisi_lain").required = true;
+      } else {
+        lainnyaGroup.style.display = "none";
+        document.getElementById("kondisi_lain").value = "";
+        document.getElementById("kondisi_lain").required = false;
+      }
+    }
+
+    function validateForm(data) {
+      document.getElementById("error-tanggal").style.display = data.tanggal ? "none" : "block";
+      document.getElementById("error-alamat").style.display = data.alamat ? "none" : "block";
+      document.getElementById("error-jenis").style.display = data.jenis || data.jenis_text ? "none" : "block";
+      document.getElementById("error-kondisi").style.display = data.kondisi ? "none" : "block";
+      return data.tanggal && data.alamat && (data.jenis || data.jenis_text) && data.kondisi;
+    }
+
+    function disableFormInputs() {
+      document.querySelectorAll("#form input, #form select, #form textarea").forEach(el => el.disabled = true);
+      document.getElementById("submitBtn").disabled = true;
+      document.getElementById("submitBtn").firstChild.textContent = "⏳ Mengirim…";
+      document.getElementById("btn-spinner").style.display = "inline-block";
+    }
+
+    function enableFormInputs() {
+      document.querySelectorAll("#form input, #form select, #form textarea").forEach(el => el.disabled = false);
+      document.getElementById("submitBtn").disabled = false;
+      document.getElementById("submitBtn").firstChild.textContent = "Kirim ";
+      document.getElementById("btn-spinner").style.display = "none";
+    }
+
+    function startCooldown() {
+      const cooldownMs = 60000;
+      const key = "cooldown_timestamp_global";
+      localStorage.setItem(key, Date.now().toString());
+
+      const submitBtn = document.getElementById("submitBtn");
+      const spinner = document.getElementById("btn-spinner");
+
+      submitBtn.disabled = true;
+      spinner.style.display = "none";
+
+      let remaining = 60;
+      const interval = setInterval(() => {
+        submitBtn.textContent = `Tunggu ${remaining--} detik`;
+        if (remaining < 0) {
+          clearInterval(interval);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Kirim <div id="btn-spinner" class="spinner" style="display:none;"></div>';
+          localStorage.removeItem(key);
+        }
+      }, 1000);
+    }
+
+    window.onload = function () {
+      document.getElementById("tanggal").valueAsDate = new Date();
+      document.getElementById("foto").addEventListener("change", function () {
+        const file = this.files[0];
+        const preview = document.getElementById("preview");
+        if (file) {
+          resizeImage(file, base64 => {
+            preview.src = base64;
+            preview.style.display = "block";
+            preview.dataset.base64 = base64.split(',')[1];
+          });
+        } else {
+          preview.src = "";
+          preview.style.display = "none";
+        }
+      });
+
+      document.querySelectorAll('input[name="kondisi"]').forEach(cb => {
+        cb.addEventListener("change", toggleLainnya);
+      });
+
+      const cooldown = localStorage.getItem("cooldown_timestamp_global");
+      if (cooldown && Date.now() - parseInt(cooldown, 10) < 60000) {
+        startCooldown();
+      }
+
+      if (idFromServer) {
+        document.getElementById("id_aset").value = idFromServer;
+        document.getElementById("loading").style.display = "block";
+        
+        fetch(`${GAS_URL}?id_aset=${encodeURIComponent(idFromServer)}`)
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === "success" && res.data) {
+              const data = res.data;
+              document.getElementById("koordinat").value = data.koordinat;
+              document.getElementById("alamat").value = data.alamat;
+              document.getElementById("jenis_text").value = data.jenis;
+              document.getElementById("jenis").style.display = "none";
+              document.getElementById("jenis_text").hidden = false;
+              document.getElementById("alamat").readOnly = true;
+            }
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("form").style.display = "block";
+          })
+          .catch(err => {
+            console.error(err);
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("form").style.display = "block";
+          });
+
+      } else {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("form").style.display = "block";
+        document.getElementById("id_group").style.display = "none";
+        document.getElementById("koor_group").style.display = "none";
+        document.getElementById("jenis_text").disabled = true;
+        document.getElementById("jenis_text").hidden = true;
+      }
+
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (isSubmitting) return;
+        isSubmitting = true;
+
+        const kondisiChecked = document.querySelectorAll('input[name="kondisi"]:checked');
+        let kondisiValue = Array.from(kondisiChecked)
+          .map(cb => cb.value)
+          .filter(val => val !== "Lainnya")
+          .join(", ");
+        if (Array.from(kondisiChecked).some(cb => cb.value === "Lainnya")) {
+          const lain = document.getElementById("kondisi_lain").value;
+          if (lain) kondisiValue += (kondisiValue ? ", " : "") + lain;
+        }
+
+        const data = {
+          foto: document.getElementById("preview").dataset.base64 || "",
+          filename: document.getElementById("foto").files[0]?.name || "",
+          tanggal: document.getElementById("tanggal").value,
+          id_aset: document.getElementById("id_aset").value,
+          koordinat: document.getElementById("koordinat").value,
+          alamat: document.getElementById("alamat").value,
+          jenis: document.getElementById("jenis").value,
+          jenis_text: document.getElementById("jenis_text").value,
+          kondisi: kondisiValue,
+          keterangan: document.getElementById("keterangan").value,
+          wa: formatWA(document.getElementById("wa").value)
+        };
+
+        if (!validateForm(data)) {
+          isSubmitting = false;
+          return;
+        }
+
+        disableFormInputs();
+    
+        fetch(GAS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8", 
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+           if (result.status === "success") {
+             document.getElementById("form").style.display = "none";
+             document.getElementById("success").style.display = "block";
+             startCooldown();
+             isSubmitting = false;
+           } else {
+             throw new Error(result.message);
+           }
+        })
+        .catch(error => {
+          isSubmitting = false;
+          enableFormInputs();
+          if(error.toString().includes('IMAGE_UNSAFE')){
+            const errorText = document.getElementById("unsafe_image_error");
+            errorText.className = "text-red";
+          } else {
+            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
+            const errorText = document.getElementById("unsafe_image_error");
+            errorText.className = "hidden text-red";
+          }
+        });
+      });
+    };
   </script>
 </body>
 </html>
