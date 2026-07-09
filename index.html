@@ -1,522 +1,453 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
-  <meta charset="UTF-8">
+  <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard Pengaduan - Dinas Perhubungan Kab. Lumajang</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #0f172a; --secondary: #2563eb; --menunggu: #ef4444; --ditangani: #10b981; --bg-gray: #e9eef5; 
-      --soft-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
-      --hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-      --logo-size: 120px; --logo-margin-bottom: 15px; --header-title-size: 32px; --header-sub-size: 25px; --header-gap: 8px;              
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: url('https://raw.githubusercontent.com/DISHUBLMJ/dishublmj.github.io/main/background.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
     }
-    
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-gray); margin: 0; padding: 0; color: #334155; }
-
-    /* BLOK ATAS */
-    .hero-wrapper { background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 58, 138, 0.85) 100%), url('background.jpg') no-repeat center center; background-size: cover; display: flex; flex-direction: column; width: 100%; }
-    .hero-content { padding: 50px 20px 40px 20px; color: white; text-align: center; }
-    .hero-content img { height: var(--logo-size); margin-bottom: var(--logo-margin-bottom); object-fit: contain; }
-    .hero-title { font-size: var(--header-title-size); font-weight: 700; letter-spacing: 0.5px; margin: 0; }
-    .hero-subtitle { font-size: var(--header-sub-size); font-weight: 400; opacity: 0.9; margin-top: var(--header-gap); }
-    
-    .admin-sync-btn { background-color: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); padding: 10px 24px; border-radius: 20px; font-size: 0.9em; font-weight: 600; cursor: pointer; backdrop-filter: blur(5px); transition: all 0.3s ease; margin-top: 25px; display: none; }
-    .admin-sync-btn:hover { background-color: rgba(255, 255, 255, 0.25); border-color: #ffffff; }
-
-    .action-section-full { background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(16px); border-top: 1px solid rgba(255, 255, 255, 0.2); border-bottom: 1px solid rgba(255, 255, 255, 0.2); width: 100%; }
-    .action-container { max-width: 950px; margin: 0 auto; padding: 20px; display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; }
-    
-    .filter-group { display: flex; flex-direction: column; min-width: 0; }
-    .group-pencarian { flex: 1.75; min-width: 180px; } .group-jenis { flex: 1.75; min-width: 180px; } .group-status { flex: 1; min-width: 150px; } .group-tombol { flex: 0 0 auto; } 
-
-    .filter-group label { font-size: 0.85em; color: #ffffff; margin-bottom: 8px; font-weight: 600; }
-    .filter-group input, .select-trigger { padding: 8px 14px; height: 40px; border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 8px; font-family: inherit; font-size: 0.9em; width: 100%; box-sizing: border-box; outline: none; transition: all 0.2s ease; background: rgba(255, 255, 255, 0.95); color: #0f172a; }
-    .filter-group input:focus { border-color: #60a5fa; background: #ffffff; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); }
-    
-    .btn-lapor { background-color: var(--secondary); color: white; padding: 8px 20px; height: 40px; border: none; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.9em; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-    .btn-lapor:hover { background-color: #1d4ed8; transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
-
-    /* DROPDOWN */
-    .custom-select { position: relative; width: 100%; user-select: none; }
-    .select-trigger { cursor: pointer; display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
-    .action-container .select-trigger { margin-top: 0; }
-    .select-trigger span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-right: 10px; font-weight: 500; }
-    .custom-select.open .select-trigger { background: #ffffff; border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); }
-    
-    .arrow { border: solid #64748b; border-width: 0 2px 2px 0; display: inline-block; padding: 4px; transform: rotate(45deg); transition: transform 0.3s ease; }
-    .custom-select.open .arrow { transform: rotate(-135deg); margin-top: 4px; border-color: var(--secondary); }
-    .select-options { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 6px; padding: 6px 0; list-style: none; z-index: 50; max-height: 250px; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.15); opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.2s; }
-    .select-options.show { opacity: 1; visibility: visible; transform: translateY(0); }
-    .select-options li { padding: 10px 14px; cursor: pointer; transition: background 0.2s, color 0.2s; color: #334155; font-size: 0.9em; font-weight: 500; }
-    .select-options li:hover { background: #f1f5f9; color: var(--secondary); }
-
-    /* BLOK BAWAH */
-    .main-content { padding: 40px 20px 60px 20px; }
-    .container { max-width: 950px; margin: 0 auto; }
-    .section-title-wrapper { margin-bottom: 24px; display: flex; justify-content: center;}
-    .section-title { color: var(--primary); font-size: 22px; font-weight: 700; margin: 0; padding-bottom: 8px; border-bottom: 3px solid var(--secondary); }
-    
-    .card-list { display: flex; flex-direction: column; gap: 14px; }
-    .card { background: #ffffff; border: 1px solid transparent; border-radius: 12px; padding: 16px 20px; display: flex; flex-direction: column; transition: all 0.2s ease; cursor: pointer; box-shadow: var(--soft-shadow); }
-    .card:hover { box-shadow: var(--hover-shadow); transform: translateY(-3px); border-color: #e2e8f0; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .id-dumas { font-weight: 700; color: var(--primary); font-size: 1.05em; }
-    .status-badge { display: inline-block; padding: 5px 12px; border-radius: 20px; color: white; font-size: 0.75em; font-weight: 600; }
-    .status-menunggu { background-color: var(--menunggu); }
-    .status-ditangani { background-color: var(--ditangani); }
-    .card-body { font-size: 0.9em; color: #475569; line-height: 1.5; }
-    .card-footer { margin-top: 12px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px; }
-    .tanggal { font-size: 0.85em; color: #64748b; font-weight: 500; display: flex; align-items: center; gap: 6px; }
-    .btn-detail { background: none; border: none; color: var(--secondary); font-weight: 600; cursor: pointer; font-size: 0.9em; }
-
-    .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 30px; }
-    .page-btn { padding: 8px 14px; border: 1px solid #cbd5e1; background: white; cursor: pointer; border-radius: 8px; font-size: 0.9em; font-weight: 500; }
-    .page-btn:hover:not(:disabled) { background: #f8fafc; color: var(--primary); }
-    .page-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); }
-    .page-btn:disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; visibility: hidden; opacity: 0; transition: all 0.3s ease; backdrop-filter: blur(5px); }
-    .modal-content { background: #ffffff; width: 100%; max-width: 650px; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; transform: scale(0.95); opacity: 0; transition: all 0.3s; }
-    .modal-overlay.show { visibility: visible; opacity: 1; }
-    .modal-overlay.show .modal-content { transform: scale(1); opacity: 1; }
-    
-    .modal-header { background: var(--primary); color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
-    .modal-header h3 { margin: 0; font-size: 18px; }
-    .close-btn { background: rgba(255, 255, 255, 0.1); border: none; color: white; font-size: 24px; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-    
-    .modal-body { padding: 24px; overflow-y: auto; }
-    .detail-section { margin-bottom: 24px; }
-    .detail-title { font-weight: 700; color: var(--primary); margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; }
-    .detail-row { display: flex; margin-bottom: 10px; font-size: 0.95em; }
-    .detail-label { width: 140px; color: #64748b; font-weight: 600; flex-shrink: 0; }
-    .detail-val { flex: 1; color: #1e293b; font-weight: 500;}
-    
-    .img-preview { width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; background: #f1f5f9; margin-top: 12px; border: 1px solid #e2e8f0; cursor: pointer; }
-    #loadingIndicator { text-align: center; padding: 40px; color: #64748b; font-weight: 500; font-style: italic; }
-
-    /* FORMULIR MODAL */
-    #formModal label { display: block; margin-top: 18px; margin-bottom: 8px; font-weight: 600; color: #334155; font-size: 0.9em; }
-    #formModal input[type="text"], #formModal input[type="tel"], #formModal input[type="file"], #formModal textarea { width: 100%; padding: 10px 14px; box-sizing: border-box; font-size: 0.95em; border: 1px solid #cbd5e1; border-radius: 8px; background-color: #ffffff; outline:none; font-family: inherit; }
-    #formModal input:focus, #formModal textarea:focus { border-color: var(--secondary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-    #formModal .select-trigger { border: 1px solid #cbd5e1; background-color: #ffffff; height: auto; padding: 10px 14px; margin-top: 0; }
-    #formModal button[type="submit"] { width: auto; min-width: 120px; padding: 12px 24px; font-weight: 600; background-color: var(--secondary); color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-    
-    .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
-    .checkbox-row input[type="checkbox"] { margin: 0; width: 16px; height: 16px; cursor: pointer; }
-    .checkbox-row span { font-size: 0.9em; color: #334155; cursor: pointer; font-weight: 500; }
-    .error-message { color: var(--menunggu); font-size: 0.8em; margin-top: 4px; font-weight: 600; display: none; }
-    .hidden { display: none; }
-    .text-red { color: var(--menunggu); font-size: 0.85em; margin-top: 8px; font-style: italic; font-weight: 500;}
-    
-    #loadingForm, #successForm { text-align: center; margin-top: 20px; font-weight: 600; }
-    #successForm { display: none; color: #065f46; background-color: #d1fae5; border: 1px solid #a7f3d0; padding: 16px; border-radius: 8px; }
-    .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 0.8s linear infinite; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-    .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 9999; display: flex; justify-content: center; align-items: center; visibility: hidden; opacity: 0; transition: visibility 0.3s, opacity 0.3s ease; backdrop-filter: blur(8px); }
-    .lightbox-overlay.show { visibility: visible; opacity: 1; }
-    .lightbox-img { max-width: 90%; max-height: 90vh; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.4); object-fit: contain; transform-origin: center center; cursor: pointer; transition: transform 0.15s ease-out; }
-    .lightbox-img.is-dragging { transition: none !important; }
-
-    @media (max-width: 768px) {
-      .hero-title { font-size: 22px; } .hero-subtitle { font-size: 14px; }
-      .group-pencarian, .group-jenis, .group-status, .group-tombol { flex: 1 1 100%; min-width: 100%; }
-      .btn-lapor { width: 100%; margin-top: 5px; } .detail-row { flex-direction: column; }
-      .detail-label { width: 100%; margin-bottom: 4px; } #formModal button[type="submit"] { width: 100%; }
+    .hero-header {
+      background: transparent;
+      height: auto;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-shadow: 0 2px 5px rgba(0, 0, 0, 0.6);
+      border-radius: 0 0 12px 12px;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: nowrap;
+      text-align: left;
+      justify-content: center;
+    }
+    .header-content img {
+      height: 100px;
+      width: auto;
+    }
+    .hero-header-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.3;
+    }
+    .hero-header-text div:first-child {
+      font-size: 3em;
+      font-weight: bold;
+    }
+    .hero-header-text div:last-child {
+      font-size: 1.6em;
+    }
+    form {
+      background: white;
+      max-width: 600px;
+      margin: 20px auto 40px auto;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      box-sizing: border-box;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background-color: #fff;
+    }
+    button {
+      padding: 10px 24px;
+      font-size: 1em;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    button:disabled {
+      background-color: #999;
+      cursor: not-allowed;
+    }
+    #loading, #success {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 1em;
+      font-weight: bold;
+      color: white;
+      background: none;
+    }
+    #success { display: none; }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 6px 0;
+    }
+    .checkbox-row input[type="checkbox"] {
+      margin: 0;
+      width: 18px;
+      height: 18px;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.9em;
+      margin-top: 4px;
+      display: none;
+    }
+    #preview {
+      margin-top: 10px;
+      max-width: 100%;
+      display: none;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 600px) {
+      .hero-header-text div:first-child { font-size: 1.6em; }
+      .hero-header-text div:last-child { font-size: 1em; }
+      .header-content img { height: 70px; }
+      button { width: 100%; justify-content: center; }
+    }
+    .hidden{
+      display:none;
+    }
+    .text-red{
+      color:red;
     }
   </style>
 </head>
+
 <body>
-
-  <div class="hero-wrapper">
-    <div class="hero-content">
-      <img src="logo.png" alt="Logo Dinas" onerror="this.src='https://drive.google.com/thumbnail?sz=w500&id=1EvO-4VMstr4OmOJeQYJ2y-qMsbbE1Oe0'" />
-      <h1 class="hero-title">DINAS PERHUBUNGAN KABUPATEN LUMAJANG</h1>
-      <div class="hero-subtitle">PENGADUAN PRASARANA PERHUBUNGAN</div>
-      <div id="adminContainer">
-        <button type="button" id="syncBtn" class="admin-sync-btn" onclick="pemicuSinkronisasiManual()">🔄 Sinkronisasi Data</button>
-      </div>
-    </div>
-    <div class="action-section-full">
-      <div class="action-container">
-        <div class="filter-group group-pencarian">
-          <label>Pencarian</label>
-          <input type="text" id="searchInput" placeholder="Cari ID, Alamat...">
-        </div>
-        <div class="filter-group group-jenis">
-          <label>Jenis Prasarana</label>
-          <div class="custom-select" id="wrapperJenis">
-            <div class="select-trigger" onclick="toggleDropdown('jenis')">
-              <span id="textJenis">Semua Jenis</span><span class="arrow"></span>
-            </div>
-            <ul class="select-options" id="listJenis">
-              <li onclick="pilihOpsiFilter('jenis', 'Semua', 'Semua Jenis')">Semua Jenis</li>
-              <li onclick="pilihOpsiFilter('jenis', 'Alat Penerangan Jalan (APJ)', 'Alat Penerangan Jalan (APJ)')">Alat Penerangan Jalan (APJ)</li>
-              <li onclick="pilihOpsiFilter('jenis', 'Alat Pemberi Isyarat Lalu Lintas (APILL)', 'Alat Pemberi Isyarat Lalu Lintas (APILL)')">Alat Pemberi Isyarat Lalu Lintas (APILL)</li>
-            </ul>
-          </div>
-          <input type="hidden" id="filterJenis" value="Semua">
-        </div>
-        <div class="filter-group group-status">
-          <label>Status Laporan</label>
-          <div class="custom-select" id="wrapperStatus">
-            <div class="select-trigger" onclick="toggleDropdown('status')">
-              <span id="textStatus">Semua Status</span><span class="arrow"></span>
-            </div>
-            <ul class="select-options" id="listStatus">
-              <li onclick="pilihOpsiFilter('status', 'Semua', 'Semua Status')">Semua Status</li>
-              <li onclick="pilihOpsiFilter('status', 'Menunggu', 'Menunggu')">Menunggu</li>
-              <li onclick="pilihOpsiFilter('status', 'Sudah Ditangani', 'Sudah Ditangani')">Sudah Ditangani</li>
-            </ul>
-          </div>
-          <input type="hidden" id="filterStatus" value="Semua">
-        </div>
-        <div class="filter-group group-tombol">
-          <button class="btn-lapor" onclick="bukaFormManual()">+ Buat Aduan</button>
-        </div>
+  <div class="hero-header">
+    <div class="header-content">
+      <img src="https://drive.google.com/thumbnail?sz=w500&id=1EvO-4VMstr4OmOJeQYJ2y-qMsbbE1Oe0" alt="Logo Dinas" />
+      <div class="hero-header-text">
+        <div>DINAS PERHUBUNGAN LUMAJANG</div>
+        <div>PENGADUAN PRASARANA PERHUBUNGAN</div>
       </div>
     </div>
   </div>
 
-  <div class="main-content">
-    <div class="container">
-      <div class="section-title-wrapper"><h2 class="section-title">DAFTAR PENGADUAN</h2></div>
-      <div id="loadingIndicator">🔄 Memuat data pengaduan...</div>
-      <div class="card-list" id="laporanContainer"></div>
-      <div class="pagination" id="paginationContainer"></div>
-    </div>
-  </div>
+  <div id="loading">🔄 Mohon ditunggu sebentar...</div>
+  <div id="success">✅ Pengaduan telah kami terima dan segera kami tindak lanjuti.</div>
 
-  <div class="modal-overlay" id="detailModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="m-id">Detail</h3>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="detail-section">
-          <div class="detail-title">Informasi Laporan</div>
-          <div class="detail-row"><div class="detail-label">Status</div><div class="detail-val"><span id="m-status-badge"></span></div></div>
-          <div class="detail-row"><div class="detail-label">Tanggal</div><div class="detail-val" id="m-tanggal"></div></div>
-          <div class="detail-row"><div class="detail-label">Jenis</div><div class="detail-val" id="m-jenis"></div></div>
-          <div class="detail-row"><div class="detail-label">Kondisi</div><div class="detail-val" id="m-kondisi"></div></div>
-          <div class="detail-row"><div class="detail-label">Alamat</div><div class="detail-val" id="m-alamat"></div></div>
-          <div class="detail-row"><div class="detail-label">Keterangan</div><div class="detail-val" id="m-ket"></div></div>
-          <img id="m-foto-lapor" class="img-preview" src="" style="display:none;" onclick="openLightbox(this.src)">
-        </div>
-        <div class="detail-section" id="box-penanganan" style="display:none;">
-          <div class="detail-title" style="color:var(--ditangani);">Tindakan Penanganan</div>
-          <div class="detail-row"><div class="detail-label">Waktu</div><div class="detail-val" id="m-waktu-tangani"></div></div>
-          <div class="detail-row"><div class="detail-label">Tim Bertugas</div><div class="detail-val" id="m-tim"></div></div>
-          <div class="detail-row"><div class="detail-label">Tindakan</div><div class="detail-val" id="m-tindakan"></div></div>
-          <img id="m-foto-tangani" class="img-preview" src="" style="display:none;" onclick="openLightbox(this.src)">
-        </div>
-      </div>
-    </div>
-  </div>
+  <form id="form" style="display:none;">
+    <label>Foto Pengaduan:</label>
+    <input type="file" id="foto" accept="image/*">
+    
+    <img id="preview" alt="Preview Gambar" />
 
-  <div class="modal-overlay" id="formModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Formulir Pengaduan</h3>
-        <button class="close-btn" onclick="closeFormModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div id="loadingForm" style="display:none;">🔄 Memuat form...</div>
-        <div id="successForm">✅ Pengaduan telah kami terima.</div>
-        <form id="form">
-          <label style="margin-top:0;">Foto Pengaduan:</label>
-          <div id="imgInputContainer" style="display:none;"><input type="file" id="foto" accept="image/*"></div>
-          <div id="imgInputModeContainer" style="display:none;">
-            <div class="custom-select" id="wrapperMode">
-              <div class="select-trigger" onclick="toggleDropdown('mode')">
-                <span id="textMode">Pilih foto ...</span><span class="arrow"></span>
-              </div>
-              <ul class="select-options" id="listMode">
-                <li onclick="pilihOpsiMode('camera', 'Kamera')">Kamera</li>
-                <li onclick="pilihOpsiMode('galery', 'Pilih dari galeri')">Pilih dari galeri</li>
-              </ul>
-            </div>
-            <input type="hidden" id="modeInput" value="none">
-          </div>
-          <img id="preview" style="display:none;" class="img-preview"/>
-          
-          <label>Tanggal Pengaduan:</label>
-          <input type="text" id="tanggal" readonly style="background-color: #f1f5f9; cursor: not-allowed;">
-          
-          <div id="id_group"><label>ID Aset:</label><input type="text" id="id_aset" readonly style="background-color: #f1f5f9;"></div>
-          <div id="koor_group"><label>Koordinat:</label><input type="text" id="koordinat" readonly style="background-color: #f1f5f9;"></div>
-          
-          <label>Alamat:</label>
-          <input type="text" id="alamat"><div id="error-alamat" class="error-message">⚠ Wajib diisi</div>
-          
-          <div id="jenis_group">
-            <label>Jenis Prasarana:</label>
-            <div class="custom-select" id="wrapperJenisForm">
-              <div class="select-trigger" onclick="toggleDropdown('jenisForm')"><span id="textJenisForm">Pilih...</span><span class="arrow"></span></div>
-              <ul class="select-options" id="listJenisForm">
-                <li onclick="pilihOpsiForm('jenisForm', 'Alat Penerangan Jalan (APJ)', 'Alat Penerangan Jalan (APJ)')">Alat Penerangan Jalan (APJ)</li>
-                <li onclick="pilihOpsiForm('jenisForm', 'Alat Pemberi Isyarat Lalu Lintas (APILL)', 'Alat Pemberi Isyarat Lalu Lintas (APILL)')">Alat Pemberi Isyarat Lalu Lintas (APILL)</li>
-              </ul>
-            </div>
-            <input type="hidden" id="jenis" value="">
-            <input type="text" id="jenis_text" readonly hidden style="background-color: #f1f5f9;">
-            <div id="error-jenis" class="error-message">⚠ Wajib diisi</div>
-          </div>
-          
-          <label>Kondisi Prasarana (bisa pilih lebih dari satu):</label>
-          <div id="kondisi_group">
-            <div class="checkbox-row"><input type="checkbox" name="kondisi" id="cb1" value="Mati"><span onclick="document.getElementById('cb1').click()">&nbsp;Mati</span></div>
-            <div class="checkbox-row"><input type="checkbox" name="kondisi" id="cb2" value="Kabel terputus"><span onclick="document.getElementById('cb2').click()">&nbsp;Kabel terputus</span></div>
-            <div class="checkbox-row"><input type="checkbox" name="kondisi" id="cb3" value="Tertabrak kendaraan"><span onclick="document.getElementById('cb3').click()">&nbsp;Tertabrak kendaraan</span></div>
-            <div class="checkbox-row"><input type="checkbox" name="kondisi" id="cb4" value="Tiang patah atau roboh"><span onclick="document.getElementById('cb4').click()">&nbsp;Tiang patah atau roboh</span></div>
-            <div class="checkbox-row"><input type="checkbox" name="kondisi" id="cb5" value="Lainnya"><span onclick="document.getElementById('cb5').click()">&nbsp;Lainnya</span></div>
-          </div>
-          <div id="lainnya_group" style="display:none;"><label>Jelaskan Kondisi Lainnya:</label><input type="text" id="kondisi_lain"></div>
-          <div id="error-kondisi" class="error-message">⚠ Pilih minimal 1 kondisi</div>
-          
-          <label>Keterangan Lain (Opsional):</label><textarea id="keterangan" placeholder="Tambahkan catatan..."></textarea>
-          <label>Nomor WhatsApp:</label><input type="tel" id="wa" placeholder="081234567890">
-          
-          <p id="unsafe_image_error" class="hidden text-red">Foto yang Anda masukkan tidak lulus sensor keamanan.</p>
-          <button type="submit" id="submitBtn">Kirim <div id="btn-spinner" class="spinner" style="display:none;"></div></button>
-        </form>
-      </div>
-    </div>
-  </div>
+    <label>Tanggal Pengaduan:</label>
+    <input type="date" id="tanggal">
+    <div id="error-tanggal" class="error-message">Wajib diisi</div>
 
-  <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
-    <img id="lightboxImg" class="lightbox-img" src="" draggable="false">
-  </div>
+    <div id="id_group">
+      <label>ID Aset:</label>
+      <input type="text" id="id_aset" readonly>
+    </div>
+
+    <div id="koor_group">
+      <label>Koordinat:</label>
+      <input type="text" id="koordinat" readonly>
+    </div>
+
+    <label>Alamat:</label>
+    <input type="text" id="alamat">
+    <div id="error-alamat" class="error-message">Wajib diisi</div>
+
+    <div id="jenis_group">
+      <label>Jenis Prasarana:</label>
+      <select id="jenis">
+        <option value="">Pilih...</option>
+        <option>Alat Penerangan Jalan (APJ)</option>
+        <option>Alat Pemberi Isyarat Lalu Lintas (APILL)</option>
+      </select>
+      <input type="text" id="jenis_text" readonly hidden>
+      <div id="error-jenis" class="error-message">Wajib diisi</div>
+    </div>
+
+    <label>Kondisi Prasarana (bisa pilih lebih dari satu):</label>
+    <div id="kondisi_group">
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Mati"><span>Mati</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Kabel terputus"><span>Kabel terputus</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Tertabrak kendaraan"><span>Tertabrak kendaraan</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Tiang patah atau roboh"><span>Tiang patah atau roboh</span></div>
+      <div class="checkbox-row"><input type="checkbox" name="kondisi" value="Lainnya"><span>Lainnya</span></div>
+    </div>
+    <div id="lainnya_group" style="display:none;">
+      <label>Jelaskan Kondisi Lainnya:</label>
+      <input type="text" id="kondisi_lain">
+    </div>
+    <div id="error-kondisi" class="error-message">Pilih minimal 1</div>
+
+    <label>Keterangan Lain (Opsional):</label>
+    <textarea id="keterangan"></textarea>
+
+    <label>Nomor WhatsApp:</label>
+    <input type="tel" id="wa" placeholder="Contoh: 081234567890">
+    <small style="color: gray;">Opsional. Jika diisi, Anda akan menerima pemberitahuan status penanganan melalui WhatsApp.</small>
+    <p id="unsafe_image_error" class="hidden text-red"><i>Foto yang anda masukan tidak lulus sensor</i></p>
+    <button type="submit" id="submitBtn">
+      Kirim <div id="btn-spinner" class="spinner" style="display:none;"></div>
+    </button>
+  </form>
 
   <script>
     // ⚠️ GANTI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA YANG BARU
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwKOdpxWa7WKPbNlEE0EFxoRnRU_PhljFRRwRPepXaDs0R7dpV6URKlQ2O8Vma645MYeQ/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbxfT_kejD3xBAYGTzBdUmTNfM3AF4l9jmIvFPSZxwTGKTO35Yr-Pteiwzib3OncFioxNg/exec";
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const idFromServer = urlParams.get("id_aset");
-    const syncAdminParam = urlParams.get("sync");
-    const ADMIN_SECRET = "Dishublmj2026"; 
+    const params = new URLSearchParams(window.location.search);
+    const idFromServer = params.get("id_aset");
+    
+    let isSubmitting = false;
 
-    if (syncAdminParam === ADMIN_SECRET) {
-      document.getElementById('syncBtn').style.display = 'inline-block';
-    }
-
-    let globalData = [], filteredData = [], currentPage = 1, isSubmitting = false;
-    const itemsPerPage = 5;
-    let currentZoomScale = 1, isDragging = false, startX = 0, startY = 0, translateX = 0, translateY = 0;
-
-    function lockScroll() { document.body.style.paddingRight = (window.innerWidth - document.documentElement.clientWidth) + 'px'; document.body.style.overflow = 'hidden'; }
-    function unlockScroll() { document.body.style.paddingRight = ''; document.body.style.overflow = ''; }
-
-    function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-    function toggleDropdown(j) {
-      document.querySelectorAll('.custom-select').forEach(w => { if(w.id !== `wrapper${capitalize(j)}`) { w.classList.remove('open'); w.querySelector('.select-options').classList.remove('show'); } });
-      const w = document.getElementById(`wrapper${capitalize(j)}`), l = document.getElementById(`list${capitalize(j)}`);
-      if(w && l) { w.classList.toggle('open'); l.classList.toggle('show'); }
-    }
-    function pilihOpsiFilter(j, val, txt) {
-      document.getElementById(`text${capitalize(j)}`).innerText = txt; document.getElementById(`filter${capitalize(j)}`).value = val;
-      document.getElementById(`wrapper${capitalize(j)}`).classList.remove('open'); document.getElementById(`list${capitalize(j)}`).classList.remove('show');
-      applyFilters();
-    }
-    function pilihOpsiForm(j, val, txt) {
-      document.getElementById(`text${capitalize(j)}`).innerText = txt; document.getElementById(j === 'jenisForm' ? 'jenis' : j).value = val;
-      document.getElementById(`wrapper${capitalize(j)}`).classList.remove('open'); document.getElementById(`list${capitalize(j)}`).classList.remove('show');
-    }
-    function pilihOpsiMode(val, txt) {
-      document.getElementById('textMode').innerText = txt; document.getElementById('modeInput').value = val;
-      document.getElementById('wrapperMode').classList.remove('open'); document.getElementById('listMode').classList.remove('show'); handleModeChange();
-    }
-
-    function fetchDashboard() {
-      fetch(GAS_URL + '?action=getDashboard')
-        .then(res => res.json())
-        .then(res => { if (res.status === 'success') { globalData = res.data; applyFilters(); } document.getElementById('loadingIndicator').style.display = 'none'; })
-        .catch(() => document.getElementById('loadingIndicator').innerHTML = '⚠ Gagal memuat data.');
-    }
-
-    function applyFilters() {
-      const search = document.getElementById('searchInput').value.toLowerCase(), status = document.getElementById('filterStatus').value, jenis = document.getElementById('filterJenis').value;
-      filteredData = globalData.filter(i => {
-        const mSearch = (i.id_dumas||'').toLowerCase().includes(search) || (i.alamat||'').toLowerCase().includes(search) || (i.jenis||'').toLowerCase().includes(search);
-        return mSearch && (status === 'Semua' || i.status_tampil === status) && (jenis === 'Semua' || i.jenis === jenis);
-      });
-      currentPage = 1; renderPage();
-    }
-    document.getElementById('searchInput').addEventListener('input', applyFilters);
-
-    function renderPage() {
-      const c = document.getElementById('laporanContainer'); c.innerHTML = '';
-      if(!filteredData.length) { c.innerHTML = '<div style="text-align:center; padding:30px;">Tidak ada data ditemukan.</div>'; document.getElementById('paginationContainer').innerHTML = ''; return; }
-      const currentData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-      currentData.forEach(item => {
-        const bg = item.status_tampil === 'Sudah Ditangani' ? 'status-ditangani' : 'status-menunggu';
-        const card = document.createElement('div'); card.className = 'card'; card.setAttribute('onclick', `openDetailModal('${item.id_dumas}')`);
-        card.innerHTML = `<div class="card-header"><span class="id-dumas">${item.id_dumas||'-'}</span><span class="status-badge ${bg}">${item.status_tampil}</span></div>
-          <div class="card-body"><strong>${item.jenis||'-'}</strong><br><span>Kondisi: ${item.kondisi||'-'}</span><br><span>Lokasi: ${item.alamat||'-'}</span></div>
-          <div class="card-footer"><span class="tanggal">📅 ${item.tanggal||'-'}</span><span class="btn-detail">Selengkapnya &rarr;</span></div>`;
-        c.appendChild(card);
-      });
-      renderPaginationControls();
-    }
-
-    function renderPaginationControls() {
-      const p = document.getElementById('paginationContainer'); p.innerHTML = '';
-      const total = Math.ceil(filteredData.length / itemsPerPage); if (total <= 1) return; 
-      const bPrev = document.createElement('button'); bPrev.className = 'page-btn'; bPrev.innerHTML = '&lsaquo; Sebelum'; bPrev.disabled = currentPage === 1; bPrev.onclick = () => { currentPage--; renderPage(); }; p.appendChild(bPrev);
-      for (let i = 1; i <= total; i++) {
-        const b = document.createElement('button'); b.className = `page-btn ${i === currentPage ? 'active' : ''}`; b.innerText = i; b.onclick = () => { currentPage = i; renderPage(); }; p.appendChild(b);
-      }
-      const bNext = document.createElement('button'); bNext.className = 'page-btn'; bNext.innerHTML = 'Lanjut &rsaquo;'; bNext.disabled = currentPage === total; bNext.onclick = () => { currentPage++; renderPage(); }; p.appendChild(bNext);
-    }
-
-    function openDetailModal(id) {
-      const d = globalData.find(i => i.id_dumas === id); if (!d) return; 
-      document.getElementById('m-id').innerText = d.id_dumas; document.getElementById('m-tanggal').innerText = d.tanggal||'-';
-      document.getElementById('m-jenis').innerText = d.jenis||'-'; document.getElementById('m-kondisi').innerText = d.kondisi||'-';
-      document.getElementById('m-alamat').innerText = d.alamat||'-'; document.getElementById('m-ket').innerText = d.keterangan||'-';
-      const mS = document.getElementById('m-status-badge'); mS.innerText = d.status_tampil; mS.className = `status-badge ${d.status_tampil === 'Sudah Ditangani' ? 'status-ditangani' : 'status-menunggu'}`;
-      const fL = document.getElementById('m-foto-lapor'); if(d.foto) { fL.src = d.foto; fL.style.display = 'block'; } else fL.style.display = 'none';
-      const bP = document.getElementById('box-penanganan');
-      if (d.status_tampil === 'Sudah Ditangani' && d.detail_penanganan) {
-        bP.style.display = 'block'; document.getElementById('m-waktu-tangani').innerText = d.detail_penanganan.tanggal_waktu||'-';
-        document.getElementById('m-tim').innerText = d.detail_penanganan.tim||'-'; document.getElementById('m-tindakan').innerText = d.detail_penanganan.kegiatan||'-';
-        const fT = document.getElementById('m-foto-tangani'); if(d.detail_penanganan.foto_kegiatan) { fT.src = d.detail_penanganan.foto_kegiatan; fT.style.display = 'block'; } else fT.style.display = 'none';
-      } else bP.style.display = 'none';
-      lockScroll(); document.getElementById('detailModal').classList.add('show');
-    }
-
-    function closeModal() { unlockScroll(); document.getElementById('detailModal').classList.remove('show'); }
-    function openFormModal() { lockScroll(); document.getElementById('formModal').classList.add('show'); }
-    function closeFormModal() { unlockScroll(); document.getElementById('formModal').classList.remove('show'); }
-
-    function pemicuSinkronisasiManual() { fetchDashboard(); alert("Menyinkronkan data langsung dari server..."); }
-
-    function resetFormKondisiAwal() {
-      document.getElementById("form").reset();
-      const h = new Date(); document.getElementById("tanggal").value = `${String(h.getDate()).padStart(2,'0')}/${String(h.getMonth()+1).padStart(2,'0')}/${h.getFullYear()}`;
-      const p = document.getElementById("preview"); p.src = ""; p.style.display = "none"; delete p.dataset.base64;
-      
-      const isMob = window.matchMedia("(max-width: 768px)").matches;
-      document.getElementById("imgInputContainer").innerHTML = "";
-      if (isMob) {
-          document.getElementById("imgInputContainer").style.display = "none"; document.getElementById("imgInputModeContainer").style.display = "block";
-          document.getElementById("textMode").innerText = "Pilih foto ..."; document.getElementById("modeInput").value = "none";
-      } else {
-          document.getElementById("imgInputContainer").style.display = "block";
-          let nI = document.createElement("input"); nI.id = "foto"; nI.type = "file"; nI.accept = "image/*"; nI.style.display = "block"; 
-          nI.onchange = () => { if(!onPhotoChanged(nI)) onCancelPickImage(); }
-          document.getElementById("imgInputContainer").appendChild(nI);
-      }
-      document.getElementById("textJenisForm").innerText = "Pilih..."; document.getElementById("jenis").value = "";
-      document.getElementById("id_group").style.display = "none"; document.getElementById("koor_group").style.display = "none";
-      document.getElementById("id_aset").value = ""; document.getElementById("koordinat").value = "";
-      document.getElementById("wrapperJenisForm").style.display = "block"; document.getElementById("jenis_text").hidden = true;
-      document.getElementById("alamat").readOnly = false; document.getElementById("alamat").style.backgroundColor = "#ffffff"; document.getElementById("alamat").value = "";
-      document.getElementById("lainnya_group").style.display = "none"; document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-      document.getElementById("successForm").style.display = "none"; document.getElementById("form").style.display = "block";
-      window.history.replaceState({path: location.pathname}, '', location.pathname);
-    }
-    function bukaFormManual() { resetFormKondisiAwal(); openFormModal(); }
-
-    function resizeImage(f, cb) {
-      const r = new FileReader();
-      r.onload = e => { const i = new Image(); i.onload = () => { const c = document.createElement("canvas"); const s = 1024 / i.width; c.width = 1024; c.height = i.height * s; c.getContext("2d").drawImage(i, 0, 0, c.width, c.height); cb(c.toDataURL("image/jpeg", 0.6)); }; i.src = e.target.result; }; r.readAsDataURL(f);
-    }
-    function onCancelPickImage() {
-      const p = document.getElementById("preview"); document.getElementById("imgInputContainer").innerHTML = "";
-      document.getElementById("foto").style.display = window.matchMedia("(max-width: 768px)").matches ? "none" : "block"; document.getElementById("imgInputContainer").appendChild(document.getElementById("foto")); p.src = ""; p.style.display = "none";
-      if(window.matchMedia("(max-width: 768px)").matches) { document.getElementById("imgInputContainer").style.display = "none"; document.getElementById("imgInputModeContainer").style.display = "block"; }
-    }
-    function handleModeChange() {
-      let m = document.getElementById("modeInput"); if(m.value === "none") return;
-      if(document.getElementById("foto")) document.getElementById("foto").remove();
-      document.getElementById("imgInputModeContainer").style.display = "none"; document.getElementById("imgInputContainer").style.display = "block";
-      let n = document.createElement("input"); n.id = "foto"; n.type = "file"; n.accept = "image/*"; n.style.display="block"; n.addEventListener("cancel", onCancelPickImage); 
-      n.onchange = () => { if(!onPhotoChanged(n)) onCancelPickImage(); }; if(m.value === "camera") n.capture = "environment";
-      document.getElementById("imgInputContainer").appendChild(n); m.value = "none"; document.getElementById("textMode").innerText = "Pilih foto ..."; n.click();
-    }
-    function onPhotoChanged(inp){
-      const f = inp.files[0], p = document.getElementById("preview");
-      if (f) { resizeImage(f, b => { p.src = b; p.style.display = "block"; p.dataset.base64 = b.split(',')[1]; }); return true; } else { p.src = ""; p.style.display = "none"; return false; }
-    }
-    document.getElementById("foto").onchange = () => onPhotoChanged(document.getElementById("foto"));
-
-    document.querySelectorAll('input[name="kondisi"]').forEach(cb => cb.addEventListener("change", () => {
-      const v = Array.from(document.querySelectorAll('input[name="kondisi"]:checked')).map(c => c.value);
-      if (v.includes("Lainnya")) { document.getElementById("lainnya_group").style.display = "block"; document.getElementById("kondisi_lain").required = true; } 
-      else { document.getElementById("lainnya_group").style.display = "none"; document.getElementById("kondisi_lain").value = ""; document.getElementById("kondisi_lain").required = false; }
-    }));
-
-    document.getElementById("form").addEventListener("submit", function (e) {
-      e.preventDefault(); if (isSubmitting) return; isSubmitting = true;
-      let kV = Array.from(document.querySelectorAll('input[name="kondisi"]:checked')).map(c => c.value).filter(v => v !== "Lainnya").join(", ");
-      if (Array.from(document.querySelectorAll('input[name="kondisi"]:checked')).some(c => c.value === "Lainnya")) { const l = document.getElementById("kondisi_lain").value; if (l) kV += (kV ? ", " : "") + l; }
-
-      const payload = {
-        action: "submitForm", foto: document.getElementById("preview").dataset.base64 || "", filename: document.getElementById("foto").files[0]?.name || "",
-        tanggal: (() => { const v = document.getElementById("tanggal").value.split('/'); return `${v[2]}-${v[1]}-${v[0]}`; })(),
-        id_aset: document.getElementById("id_aset").value, koordinat: document.getElementById("koordinat").value, alamat: document.getElementById("alamat").value,
-        jenis: document.getElementById("jenis").value, jenis_text: document.getElementById("jenis_text").value, kondisi: kV, keterangan: document.getElementById("keterangan").value,
-        wa: document.getElementById("wa").value.trim().replace(/[\s\-]/g, "")
+    function resizeImage(file, callback) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          const maxWidth = 1024;
+          const scale = maxWidth / img.width;
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const compressedData = canvas.toDataURL("image/jpeg", 0.6);
+          callback(compressedData);
+        };
+        img.src = event.target.result;
       };
+      reader.readAsDataURL(file);
+    }
 
-      document.getElementById("error-alamat").style.display = payload.alamat ? "none" : "block";
-      document.getElementById("error-jenis").style.display = payload.jenis || payload.jenis_text ? "none" : "block";
-      document.getElementById("error-kondisi").style.display = payload.kondisi ? "none" : "block";
-      if (!(payload.alamat && (payload.jenis || payload.jenis_text) && payload.kondisi)) { isSubmitting = false; return; }
+    function formatWA(input) {
+      let wa = input.trim().replace(/[\s\-]/g, "");
+      if (wa === "") return "";
+      if (wa.startsWith("0")) return "62" + wa.slice(1);
+      return wa;
+    }
 
-      const sB = document.getElementById("submitBtn"); sB.disabled = true; sB.firstChild.textContent = "⏳ Kirim…"; document.getElementById("btn-spinner").style.display = "inline-block";
-      
-      fetch(GAS_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 'success') {
-          document.getElementById("form").style.display = "none"; document.getElementById("successForm").style.display = "block";
-          fetchDashboard(); window.history.replaceState({path: location.pathname}, '', location.pathname);
-        } else throw new Error(res.message);
-      }).catch(err => {
-        sB.disabled = false; sB.firstChild.textContent = "Kirim"; document.getElementById("btn-spinner").style.display = "none";
-        if(err.toString().includes('IMAGE_UNSAFE')) document.getElementById("unsafe_image_error").className = "text-red";
-        else { alert("Gagal mengirim."); document.getElementById("unsafe_image_error").className = "hidden text-red"; }
-      }).finally(() => isSubmitting = false);
-    });
+    function toggleLainnya() {
+      const checkboxes = document.querySelectorAll('input[name="kondisi"]:checked');
+      const values = Array.from(checkboxes).map(cb => cb.value);
+      const lainnyaGroup = document.getElementById("lainnya_group");
+      if (values.includes("Lainnya")) {
+        lainnyaGroup.style.display = "block";
+        document.getElementById("kondisi_lain").required = true;
+      } else {
+        lainnyaGroup.style.display = "none";
+        document.getElementById("kondisi_lain").value = "";
+        document.getElementById("kondisi_lain").required = false;
+      }
+    }
 
-    function openLightbox(s) { if (!s) return; currentZoomScale = 1; translateX = translateY = 0; const i = document.getElementById('lightboxImg'); i.src = s; updateTransform(); document.getElementById('lightboxOverlay').classList.add('show'); }
-    function closeLightbox() { document.getElementById('lightboxOverlay').classList.remove('show'); }
-    function updateTransform() { document.getElementById('lightboxImg').style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentZoomScale})`; }
-    const lbImg = document.getElementById('lightboxImg');
-    lbImg.addEventListener('wheel', e => { e.preventDefault(); currentZoomScale = Math.min(Math.max(1, currentZoomScale + (e.deltaY < 0 ? 0.15 : -0.15)), 5); updateTransform(); }, { passive: false });
-    lbImg.addEventListener('mousedown', e => { e.preventDefault(); if (currentZoomScale > 1) { isDragging = true; startX = e.clientX - translateX; startY = e.clientY - translateY; } e.stopPropagation(); });
-    window.addEventListener('mousemove', e => { if (!isDragging) return; translateX = e.clientX - startX; translateY = e.clientY - startY; updateTransform(); });
-    window.addEventListener('mouseup', () => isDragging = false); lbImg.addEventListener('click', e => e.stopPropagation());
+    function validateForm(data) {
+      document.getElementById("error-tanggal").style.display = data.tanggal ? "none" : "block";
+      document.getElementById("error-alamat").style.display = data.alamat ? "none" : "block";
+      document.getElementById("error-jenis").style.display = data.jenis || data.jenis_text ? "none" : "block";
+      document.getElementById("error-kondisi").style.display = data.kondisi ? "none" : "block";
+      return data.tanggal && data.alamat && (data.jenis || data.jenis_text) && data.kondisi;
+    }
+
+    function disableFormInputs() {
+      document.querySelectorAll("#form input, #form select, #form textarea").forEach(el => el.disabled = true);
+      document.getElementById("submitBtn").disabled = true;
+      document.getElementById("submitBtn").firstChild.textContent = "⏳ Mengirim…";
+      document.getElementById("btn-spinner").style.display = "inline-block";
+    }
+
+    function enableFormInputs() {
+      document.querySelectorAll("#form input, #form select, #form textarea").forEach(el => el.disabled = false);
+      document.getElementById("submitBtn").disabled = false;
+      document.getElementById("submitBtn").firstChild.textContent = "Kirim ";
+      document.getElementById("btn-spinner").style.display = "none";
+    }
+
+    function startCooldown() {
+      const cooldownMs = 60000;
+      const key = "cooldown_timestamp_global";
+      localStorage.setItem(key, Date.now().toString());
+
+      const submitBtn = document.getElementById("submitBtn");
+      const spinner = document.getElementById("btn-spinner");
+
+      submitBtn.disabled = true;
+      spinner.style.display = "none";
+
+      let remaining = 60;
+      const interval = setInterval(() => {
+        submitBtn.textContent = `Tunggu ${remaining--} detik`;
+        if (remaining < 0) {
+          clearInterval(interval);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = 'Kirim <div id="btn-spinner" class="spinner" style="display:none;"></div>';
+          localStorage.removeItem(key);
+        }
+      }, 1000);
+    }
 
     window.onload = function () {
-      const h = new Date(); document.getElementById("tanggal").value = `${String(h.getDate()).padStart(2,'0')}/${String(h.getMonth()+1).padStart(2,'0')}/${h.getFullYear()}`;
-      if (idFromServer) {
-        openFormModal(); document.getElementById("id_aset").value = idFromServer; document.getElementById("loadingForm").style.display = "block"; document.getElementById("form").style.display = "none";
-        fetch(GAS_URL + '?action=lookupAset&id_aset=' + encodeURIComponent(idFromServer))
-          .then(res => res.json())
-          .then(data => {
-            if (data.status === "success") {
-              document.getElementById("koordinat").value = data.koordinat || ""; document.getElementById("alamat").value = data.alamat || "";
-              document.getElementById("jenis_text").value = data.jenis || ""; document.getElementById("wrapperJenisForm").style.display = "none";
-              document.getElementById("jenis_text").hidden = false; document.getElementById("alamat").readOnly = true; document.getElementById("alamat").style.backgroundColor = "#f1f5f9";
-            }
-            document.getElementById("loadingForm").style.display = "none"; document.getElementById("form").style.display = "block";
-          }).catch(() => { document.getElementById("loadingForm").style.display = "none"; document.getElementById("form").style.display = "block"; });
-      } else { document.getElementById("id_group").style.display = "none"; document.getElementById("koor_group").style.display = "none"; document.getElementById("jenis_text").disabled = true; document.getElementById("jenis_text").hidden = true; }
-      fetchDashboard();
-    };
+      document.getElementById("tanggal").valueAsDate = new Date();
+      document.getElementById("foto").addEventListener("change", function () {
+        const file = this.files[0];
+        const preview = document.getElementById("preview");
+        if (file) {
+          resizeImage(file, base64 => {
+            preview.src = base64;
+            preview.style.display = "block";
+            preview.dataset.base64 = base64.split(',')[1];
+          });
+        } else {
+          preview.src = "";
+          preview.style.display = "none";
+        }
+      });
 
-    window.onclick = e => {
-      if (e.target === document.getElementById('detailModal')) closeModal(); if (e.target === document.getElementById('formModal')) closeFormModal();
-      if (!e.target.closest('.custom-select')) { document.querySelectorAll('.custom-select').forEach(w => w.classList.remove('open')); document.querySelectorAll('.select-options').forEach(l => l.classList.remove('show')); }
-    }
+      document.querySelectorAll('input[name="kondisi"]').forEach(cb => {
+        cb.addEventListener("change", toggleLainnya);
+      });
+
+      const cooldown = localStorage.getItem("cooldown_timestamp_global");
+      if (cooldown && Date.now() - parseInt(cooldown, 10) < 60000) {
+        startCooldown();
+      }
+
+      if (idFromServer) {
+        document.getElementById("id_aset").value = idFromServer;
+        document.getElementById("loading").style.display = "block";
+        
+        fetch(`${GAS_URL}?id_aset=${encodeURIComponent(idFromServer)}`)
+          .then(res => res.json())
+          .then(res => {
+            if (res.status === "success" && res.data) {
+              const data = res.data;
+              document.getElementById("koordinat").value = data.koordinat;
+              document.getElementById("alamat").value = data.alamat;
+              document.getElementById("jenis_text").value = data.jenis;
+              document.getElementById("jenis").style.display = "none";
+              document.getElementById("jenis_text").hidden = false;
+              document.getElementById("alamat").readOnly = true;
+            }
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("form").style.display = "block";
+          })
+          .catch(err => {
+            console.error(err);
+            document.getElementById("loading").style.display = "none";
+            document.getElementById("form").style.display = "block";
+          });
+
+      } else {
+        document.getElementById("loading").style.display = "none";
+        document.getElementById("form").style.display = "block";
+        document.getElementById("id_group").style.display = "none";
+        document.getElementById("koor_group").style.display = "none";
+        document.getElementById("jenis_text").disabled = true;
+        document.getElementById("jenis_text").hidden = true;
+      }
+
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        if (isSubmitting) return;
+        isSubmitting = true;
+
+        const kondisiChecked = document.querySelectorAll('input[name="kondisi"]:checked');
+        let kondisiValue = Array.from(kondisiChecked)
+          .map(cb => cb.value)
+          .filter(val => val !== "Lainnya")
+          .join(", ");
+        if (Array.from(kondisiChecked).some(cb => cb.value === "Lainnya")) {
+          const lain = document.getElementById("kondisi_lain").value;
+          if (lain) kondisiValue += (kondisiValue ? ", " : "") + lain;
+        }
+
+        const data = {
+          foto: document.getElementById("preview").dataset.base64 || "",
+          filename: document.getElementById("foto").files[0]?.name || "",
+          tanggal: document.getElementById("tanggal").value,
+          id_aset: document.getElementById("id_aset").value,
+          koordinat: document.getElementById("koordinat").value,
+          alamat: document.getElementById("alamat").value,
+          jenis: document.getElementById("jenis").value,
+          jenis_text: document.getElementById("jenis_text").value,
+          kondisi: kondisiValue,
+          keterangan: document.getElementById("keterangan").value,
+          wa: formatWA(document.getElementById("wa").value)
+        };
+
+        if (!validateForm(data)) {
+          isSubmitting = false;
+          return;
+        }
+
+        disableFormInputs();
+    
+        fetch(GAS_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8", 
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+           if (result.status === "success") {
+             document.getElementById("form").style.display = "none";
+             document.getElementById("success").style.display = "block";
+             startCooldown();
+             isSubmitting = false;
+           } else {
+             throw new Error(result.message);
+           }
+        })
+        .catch(error => {
+          isSubmitting = false;
+          enableFormInputs();
+          if(error.toString().includes('IMAGE_UNSAFE')){
+            const errorText = document.getElementById("unsafe_image_error");
+            errorText.className = "text-red";
+          } else {
+            alert("Terjadi kesalahan saat mengirim data. Silakan coba lagi.");
+            const errorText = document.getElementById("unsafe_image_error");
+            errorText.className = "hidden text-red";
+          }
+        });
+      });
+    };
   </script>
 </body>
+  
 </html>
