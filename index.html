@@ -24,7 +24,7 @@
     const iframe = document.getElementById("formFrame");
     const params = new URLSearchParams(window.location.search);
     const idAset = params.get("id_aset");
-    const webAppUrl = "https://script.google.com/macros/s/AKfycbznKN8-fsGtc9E6q7OFNyLNPcxLVjPjjYoTZ3EbeGt4kBIpX5XNks7xBUhq_7uvQJVD_Q/exec";
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbzpcib1p6wAeyErlGGYqt4GNHyR-qOPYV9j65tN8upjE--u8YF52SJ9SCdLupV2wTVc6Q/exec";
     iframe.src = idAset ? `${webAppUrl}?id_aset=${encodeURIComponent(idAset)}` : webAppUrl;
   </script>
 </body>
